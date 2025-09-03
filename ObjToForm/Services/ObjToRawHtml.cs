@@ -33,7 +33,7 @@ namespace ObjToForm.Services
                     Type t when t == typeof(bool) =>
                         $"<input type='checkbox' id='{attr.Key}' name='{attr.Key}'><br>",
                     Type t when t == typeof(DateTime) =>
-                        $"<input type='text' id='{attr.Key}' name='{attr.Key}'><br>",
+                        $"<input type='date' id='{attr.Key}' name='{attr.Key}'><br>",
                     Type t when t.IsEnum =>
                         string.Join("",
                                Enum.GetNames(t)
@@ -43,6 +43,9 @@ namespace ObjToForm.Services
 
                     _ => $"<input type='text' id='{attr.Key}' name='{attr.Key}'><br>"
                 };
+
+                result += attrLabel;
+                result += attrInput;
             }
 
             result += "<br><input type='submit' value='Submit'></form>";

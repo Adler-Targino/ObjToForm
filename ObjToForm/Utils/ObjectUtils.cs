@@ -39,7 +39,7 @@ namespace ObjToForm.Utils
             else
             {
                 // Fields for class 
-                foreach (var field in obj.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly))
+                foreach (var field in obj.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
                 {
                     string name = string.IsNullOrEmpty(prefix) ? field.Name : $"{prefix}.{field.Name}";
                     Type fieldType = field.FieldType;

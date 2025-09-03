@@ -68,13 +68,9 @@ namespace ObjToForm.Tests
         {
             Dictionary<string, Type> expected = new Dictionary<string, Type>();
             expected.Add("Bar1", typeof(int));
-            expected.Add("Bar2", typeof(int));
             expected.Add("Bar3", typeof(string));
-            expected.Add("Bar4", typeof(string));
             expected.Add("Foo1.Foo1", typeof(int));
             expected.Add("Foo1.Foo2", typeof(string));
-            expected.Add("Foo2.Foo1", typeof(int));
-            expected.Add("Foo2.Foo2", typeof(string));
 
             
             var result = ObjectUtils.GetAttributesDictionary(typeof(Bar));
