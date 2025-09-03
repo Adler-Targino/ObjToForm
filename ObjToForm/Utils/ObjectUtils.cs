@@ -17,7 +17,7 @@ namespace ObjToForm.Utils
 
             if (obj.IsAnonymousType())
             {
-                //Properties
+                //Properties for AnonymousType
                 foreach (var prop in obj.GetProperties(BindingFlags.Public | BindingFlags.Instance))
                 {
                     string name = string.IsNullOrEmpty(prefix) ? prop.Name : $"{prefix}.{prop.Name}";
@@ -38,7 +38,7 @@ namespace ObjToForm.Utils
             }
             else
             {
-                // Fields
+                // Fields for class 
                 foreach (var field in obj.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly))
                 {
                     string name = string.IsNullOrEmpty(prefix) ? field.Name : $"{prefix}.{field.Name}";
