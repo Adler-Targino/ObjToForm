@@ -17,5 +17,17 @@ namespace ObjToForm
             IObjectConvertService convertService = new ObjToRawHtml();
             return convertService.ConvertToForm(obj.GetType());
         }
+
+        public static IHtmlContent ConvertToBootstrapForm(Type obj)
+        {
+            IObjectConvertService convertService = new ObjToBootstrap();
+            return convertService.ConvertToForm(obj);
+        }
+
+        public static IHtmlContent ConvertToBootstrapForm(object obj)
+        {
+            IObjectConvertService convertService = new ObjToBootstrap();
+            return convertService.ConvertToForm(obj.GetType());
+        }
     }
 }
