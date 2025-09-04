@@ -4,6 +4,6 @@ namespace ObjToForm.Interfaces
 {
     internal interface IObjectConvertService
     {
-        IHtmlContent ConvertToForm(Type obj, string action = "", string method = "post");
+        IHtmlContent ConvertToForm(Type obj);
     }
 }

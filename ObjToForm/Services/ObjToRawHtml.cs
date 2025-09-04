@@ -1,24 +1,16 @@
 ﻿using Microsoft.AspNetCore.Html;
 using ObjToForm.Interfaces;
 using ObjToForm.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace ObjToForm.Services
 {
     internal class ObjToRawHtml : IObjectConvertService
     {
-        public IHtmlContent ConvertToForm(Type obj, string action, string method)
+        public IHtmlContent ConvertToForm(Type obj)
         {
-            string formHead = $"<form method='{method}' action='{action}'>";
-
             var attrDict = ObjectUtils.GetAttributesDictionary(obj);
 
-            string result = formHead;
+            string result = "";
             foreach (var attr in attrDict)
             {
                 string attrLabel = $"<label for='{attr.Key}'>{attr.Key}</label><br>";
@@ -48,7 +40,7 @@ namespace ObjToForm.Services
                 result += attrInput;
             }
 
-            result += "<br><input type='submit' value='Submit'></form>";
+            result += "<br><input type='submit' value='Submit'>";
 
             return new HtmlString(result);
         }
