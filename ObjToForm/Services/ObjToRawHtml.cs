@@ -17,13 +17,13 @@ namespace ObjToForm.Services
                 string attrInput = attr.Value switch
                 {
                     Type t when t == typeof(int) || t == typeof(long) || t == typeof(float) || t == typeof(double) =>
-                        $"<input type='number' id='{attr.Key}' name='{attr.Key}'><br>",
+                        $"<input type='number' id='{attr.Key}' step='any' name='{attr.Key}'><br>",
                     Type t when t == typeof(string) =>
                         $"<input type='text' id='{attr.Key}' name='{attr.Key}'><br>",
                     Type t when t == typeof(char) =>
                         $"<input type='text' id='{attr.Key}' name='{attr.Key}' maxlength='1' size='1'><br>",
                     Type t when t == typeof(bool) =>
-                        $"<input type='checkbox' id='{attr.Key}' name='{attr.Key}'><br>",
+                        $"<input type='checkbox' id='{attr.Key}' value='true' name='{attr.Key}'><br>",
                     Type t when t == typeof(DateTime) =>
                         $"<input type='date' id='{attr.Key}' name='{attr.Key}'><br>",
                     Type t when t.IsEnum =>

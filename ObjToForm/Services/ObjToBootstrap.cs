@@ -18,7 +18,7 @@ namespace ObjToForm.Services
                     Type t when t == typeof(int) || t == typeof(long) || t == typeof(float) || t == typeof(double) =>
                         "<div class='form-group my-3'>" +
                         $"<label for='{attr.Key}'>{attr.Key}</label>" +
-                        $"<input type='number' id='{attr.Key}' name='{attr.Key}' class='form-control'>" +
+                        $"<input type='number' id='{attr.Key}' step='any' name='{attr.Key}' class='form-control'>" +
                         "</div>",
                     Type t when t == typeof(string) =>
                         "<div class='form-group my-3'>" +
@@ -33,7 +33,7 @@ namespace ObjToForm.Services
                     Type t when t == typeof(bool) =>
                         "<div class='form-check my-3'>" +
                         $"<label for='{attr.Key}' class='form-check-label'>{attr.Key}</label>" +
-                        $"<input type='checkbox' id='{attr.Key}' name='{attr.Key}' class='form-check-input'>" +
+                        $"<input type='checkbox' id='{attr.Key}' value='true' name='{attr.Key}' class='form-check-input'>" +
                         "</div>",
                     Type t when t == typeof(DateTime) =>
                         "<div class='form-group my-3'>" +
