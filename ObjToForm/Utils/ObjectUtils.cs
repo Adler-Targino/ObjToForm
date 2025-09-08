@@ -11,16 +11,18 @@ namespace ObjToForm.Utils
 {
     public static class ObjectUtils
     {
-        public static Dictionary<string, Type> GetAttributesDictionary(Type obj, string prefix = "")
+        public static Dictionary<string, Type> GetAttributesDictionary(Type obj, string prefix = "", bool ModelBinding = false)
         {
             var dict = new Dictionary<string, Type>();
+
+            string typeName =  ModelBinding ? $"{prefix}." : "";
 
             if (obj.IsAnonymousType())
             {
                 //Properties for AnonymousType
                 foreach (var prop in obj.GetProperties(BindingFlags.Public | BindingFlags.Instance))
                 {
-                    string name = string.IsNullOrEmpty(prefix) ? prop.Name : $"{prefix}.{prop.Name}";
+                    string name = string.IsNullOrEmpty(prefix) ? $"{typeName}{prop.Name}" : $"{prefix}.{prop.Name}";
                     Type propType = prop.PropertyType;                    
 
                     if (propType.IsPrimitive || propType == typeof(string) || propType.IsValueType)
@@ -41,7 +43,7 @@ namespace ObjToForm.Utils
                 // Fields for class 
                 foreach (var field in obj.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
                 {
-                    string name = string.IsNullOrEmpty(prefix) ? field.Name : $"{prefix}.{field.Name}";
+                    string name = string.IsNullOrEmpty(prefix) ? $"{typeName}{field.Name}" : $"{prefix}.{field.Name}";
                     Type fieldType = field.FieldType;
 
                     if (fieldType.IsPrimitive || fieldType == typeof(string) || fieldType.IsValueType)

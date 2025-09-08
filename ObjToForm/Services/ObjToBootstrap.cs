@@ -6,9 +6,9 @@ namespace ObjToForm.Services
 {
     internal class ObjToBootstrap : IObjectConvertService
     {
-        public IHtmlContent ConvertToForm(Type obj)
+        public IHtmlContent ConvertToForm(Type obj, string prefix, bool modelBinding)
         {
-            var attrDict = ObjectUtils.GetAttributesDictionary(obj);
+            var attrDict = ObjectUtils.GetAttributesDictionary(obj, prefix, modelBinding);
 
             string result = "";
             foreach (var attr in attrDict)
