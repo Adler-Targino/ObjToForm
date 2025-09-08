@@ -31,21 +31,21 @@ namespace ObjToForm.Tests
         }
 
 
-        public class Foo()
+        public class Foo
         {
-            public int Foo1;
-            public string Foo2;            
+            public int Foo1 { get; set; }
+            public string Foo2 { get; set; }
         }
 
-        public class Bar()
+        public class Bar
         {
-            public int Bar1;
-            private int Bar2;
-            public string Bar3;
-            private string Bar4;
+            public int Bar1 { get; set; }
+            private int Bar2 { get; set; }
+            public string Bar3 { get; set; }
+            private string Bar4 { get; set; }
 
-            public Foo Foo1;
-            private Foo Foo2;
+            public Foo Foo1 { get; set; }
+            private Foo Foo2 { get; set; }
         }
 
 

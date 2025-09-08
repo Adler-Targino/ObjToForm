@@ -17,45 +17,20 @@ namespace ObjToForm.Utils
 
             string typeName =  ModelBinding ? $"{prefix}." : "";
 
-            if (obj.IsAnonymousType())
+            foreach (var property in obj.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
             {
-                //Properties for AnonymousType
-                foreach (var prop in obj.GetProperties(BindingFlags.Public | BindingFlags.Instance))
-                {
-                    string name = string.IsNullOrEmpty(prefix) ? $"{typeName}{prop.Name}" : $"{prefix}.{prop.Name}";
-                    Type propType = prop.PropertyType;                    
+                string name = string.IsNullOrEmpty(prefix) ? $"{typeName}{property.Name}" : $"{prefix}.{property.Name}";
+                Type propertyType = property.PropertyType;
 
-                    if (propType.IsPrimitive || propType == typeof(string) || propType.IsValueType)
-                    {
-                        dict[name] = propType;
-                    }
-                    else if (propType.IsClass)
-                    {
-                        foreach (var sub in GetAttributesDictionary(propType, name))
-                        {
-                            dict[sub.Key] = sub.Value;
-                        }
-                    }
+                if (propertyType.IsPrimitive || propertyType == typeof(string) || propertyType.IsValueType)
+                {
+                    dict[name] = propertyType;
                 }
-            }
-            else
-            {
-                // Fields for class 
-                foreach (var field in obj.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
+                else if (propertyType.IsClass)
                 {
-                    string name = string.IsNullOrEmpty(prefix) ? $"{typeName}{field.Name}" : $"{prefix}.{field.Name}";
-                    Type fieldType = field.FieldType;
-
-                    if (fieldType.IsPrimitive || fieldType == typeof(string) || fieldType.IsValueType)
+                    foreach (var sub in GetAttributesDictionary(propertyType, name))
                     {
-                        dict[name] = fieldType;
-                    }
-                    else if (fieldType.IsClass)
-                    {
-                        foreach (var sub in GetAttributesDictionary(fieldType, name))
-                        {
-                            dict[sub.Key] = sub.Value;
-                        }
+                        dict[sub.Key] = sub.Value;
                     }
                 }
             }
