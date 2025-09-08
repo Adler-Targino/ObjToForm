@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
 	  
 	<PackageId>ObjToForm</PackageId>
-	<Version>1.0.0</Version>
+	<Version>1.0.1</Version>
 	<Authors>AdlerTargino</Authors>
 	<Description>A tool for building HTML forms from objects meant to accelerate testing without spending time writing html forms.</Description>
 	<PackageTags>aspnetcore helper</PackageTags>
