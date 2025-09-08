@@ -4,6 +4,14 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	  
+	<PackageId>ObjToForm</PackageId>
+	<Version>1.0.0</Version>
+	<Authors>AdlerTargino</Authors>
+	<Description>A tool for building HTML forms from objects meant to accelerate testing without spending time writing html forms.</Description>
+	<PackageTags>aspnetcore helper</PackageTags>
+	<RepositoryUrl>https://github.com/Adler-Targino/ObjToForm</RepositoryUrl>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
