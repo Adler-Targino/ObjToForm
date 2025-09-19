@@ -1,41 +1,40 @@
-﻿using Microsoft.VisualBasic.FileIO;
-using ObjToForm.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using ObjToForm.DataTypes.Structs;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ObjToForm.Utils
 {
     public static class ObjectUtils
     {
-        public static Dictionary<string, Type> GetAttributesDictionary(Type obj, string prefix = "", bool ModelBinding = false)
+        public static List<PropertyData> GetPropertyList(Type obj, string prefix = "", bool ModelBinding = false)
         {
-            var dict = new Dictionary<string, Type>();
+            var propertiesList = new List<PropertyData>();
 
             string typeName =  ModelBinding ? $"{prefix}." : "";
 
             foreach (var property in obj.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
             {
+                PropertyData propertyData = new PropertyData();
+
                 string name = string.IsNullOrEmpty(prefix) ? $"{typeName}{property.Name}" : $"{prefix}.{property.Name}";
                 Type propertyType = property.PropertyType;
 
                 if (propertyType.IsPrimitive || propertyType == typeof(string) || propertyType.IsValueType)
                 {
-                    dict[name] = propertyType;
+                    propertyData.PropertyName = name;
+                    propertyData.PropertyType = propertyType;
+                    propertyData.CustomAttributes = property.GetCustomAttributes(false);
+                    propertiesList.Add(propertyData);
                 }
                 else if (propertyType.IsClass)
                 {
-                    foreach (var sub in GetAttributesDictionary(propertyType, name))
+                    foreach (var subProperty in GetPropertyList(propertyType, name))
                     {
-                        dict[sub.Key] = sub.Value;
+                        propertiesList.Add(subProperty);
                     }
                 }
             }
 
-            return dict;
+            return propertiesList;
         }
     }
 }

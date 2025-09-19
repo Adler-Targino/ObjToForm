@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Html;
+using ObjToForm.DataTypes.Structs;
 using ObjToForm.Interfaces;
 using ObjToForm.Utils;
 
@@ -6,43 +7,89 @@ namespace ObjToForm.Services
 {
     internal class ObjToRawHtml : IObjectConvertService
     {
+        private CustomAttributes custAttr;
         public IHtmlContent ConvertToForm(Type obj, string prefix, bool modelBinding)
         {
-            var attrDict = ObjectUtils.GetAttributesDictionary(obj, prefix, modelBinding);
+            var properties = ObjectUtils.GetPropertyList(obj, prefix, modelBinding);
 
             string result = "";
-            foreach (var attr in attrDict)
+            foreach (var prop in properties)
             {
-                string attrLabel = $"<label for='{attr.Key}'>{attr.Key}</label><br>";
-                string attrInput = attr.Value switch
+                custAttr = new CustomAttributes(prop.CustomAttributes);
+
+                result += $"<label for='{prop.PropertyName}'>{custAttr.CustomName ?? prop.PropertyName}</label><br>";
+
+                switch (prop.PropertyType)
                 {
-                    Type t when t == typeof(int) || t == typeof(long) || t == typeof(float) || t == typeof(double) =>
-                        $"<input type='number' id='{attr.Key}' step='any' name='{attr.Key}'><br>",
-                    Type t when t == typeof(string) =>
-                        $"<input type='text' id='{attr.Key}' name='{attr.Key}'><br>",
-                    Type t when t == typeof(char) =>
-                        $"<input type='text' id='{attr.Key}' name='{attr.Key}' maxlength='1' size='1'><br>",
-                    Type t when t == typeof(bool) =>
-                        $"<input type='checkbox' id='{attr.Key}' value='true' name='{attr.Key}'><br>",
-                    Type t when t == typeof(DateTime) =>
-                        $"<input type='date' id='{attr.Key}' name='{attr.Key}'><br>",
-                    Type t when t.IsEnum =>
-                        string.Join("",
-                               Enum.GetNames(t)
-                                   .Select(v => $"<option value='{v}'>{v}</option>"))
-                                   .Insert(0, $"<select id='{attr.Key}' name='{attr.Key}'>") + 
-                                   "</select><br>",
+                    case var _ when prop.PropertyType == typeof(int)
+                                 || prop.PropertyType == typeof(long)
+                                 || prop.PropertyType == typeof(float)
+                                 || prop.PropertyType == typeof(double):
+                        AddNumberInput(ref result, prop);
+                        break;
 
-                    _ => $"<input type='text' id='{attr.Key}' name='{attr.Key}'><br>"
+                    case var _ when prop.PropertyType == typeof(string):
+                        AddTextInput(ref result, prop);
+                        break;
+
+                    case var _ when prop.PropertyType == typeof(char):
+                        AddCharInput(ref result, prop);
+                        break;
+
+                    case var _ when prop.PropertyType == typeof(bool):
+                        AddCheckInput(ref result, prop);
+                        break;
+
+                    case var _ when prop.PropertyType == typeof(DateTime):
+                        AddDateInput(ref result, prop);
+                        break;
+
+                    case var _ when prop.PropertyType.IsEnum:
+                        AddSelect(ref result, prop);
+                        break;
+
+                    default:
+                        AddTextInput(ref result, prop);
+                        break;
                 };
-
-                result += attrLabel;
-                result += attrInput;
             }
 
             result += "<br><input type='submit' value='Submit'>";
 
             return new HtmlString(result);
+        }
+
+        private void AddNumberInput(ref string s, PropertyData prop)
+        {
+            s += $"<input type='number' id='{prop.PropertyName}' step='any' name='{prop.PropertyName}'><br>";
+        }
+
+        private void AddTextInput(ref string s, PropertyData prop)
+        {
+            s += $"<input type='text' id='{prop.PropertyName}' name='{prop.PropertyName}'><br>";
+        }
+
+        private void AddCharInput(ref string s, PropertyData prop)
+        {
+            s += $"<input type='text' id='{prop.PropertyName}' name='{prop.PropertyName}' maxlength='1' size='1'><br>";
+        }
+
+        private void AddCheckInput(ref string s, PropertyData prop)
+        {
+            s += $"<input type='checkbox' id='{prop.PropertyName}' value='true' name='{prop.PropertyName}'><br>";
+        }
+
+        private void AddDateInput(ref string s, PropertyData prop)
+        {
+            s += $"<input type='date' id='{prop.PropertyName}' name='{prop.PropertyName}'><br>";
+        }
+
+        private void AddSelect(ref string s, PropertyData prop)
+        {
+            s += string.Join("", Enum.GetNames(prop.PropertyType)
+                                     .Select(v => $"<option value='{v}'>{v}</option>"))
+                                     .Insert(0, $"<select id='{prop.PropertyName}' name='{prop.PropertyName}'>") +
+                                     "</select><br>";
         }
     }
 }
