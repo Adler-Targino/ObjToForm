@@ -6,8 +6,8 @@ ObjToForm is a .NET tool for building HTML forms from objects meant to accelerat
 
 Several quick start options are available:
 
-- Install with [NuGet](https://www.nuget.org/): `Install-Package ObjToForm -Version 1.0.0`
-- Install with .NET CLI: `dotnet add package ObjToForm --version 1.0.0`
+- Install with [NuGet](https://www.nuget.org/): `Install-Package ObjToForm`
+- Install with .NET CLI: `dotnet add package ObjToForm`
 - Clone the repo: `git clone https://github.com/Adler-Targino/ObjToForm.git`
 
 ## Demo
@@ -15,15 +15,15 @@ Several quick start options are available:
 ### Example object
 ```csharp
 
-    public class DemoObj()
+    public class DemoObj
     {
-        public string PublicString;
-        public int PublicInt;
-        public DateTime PublicDateTime;
-        public float PublicFloat;
-        public bool PublicBool;
-        private string PrivateString;
-        public DemoOptions PublicOptionsEnum;
+        public string PublicString { get; set; }
+        public int PublicInt { get; set; }
+        public DateTime PublicDateTime { get; set; }
+        public float PublicFloat { get; set; }
+        public bool PublicBool { get; set; }
+        private string IShouldntBeHere {get; set;}
+        public DemoOptions PublicOptionsEnum { get; set; }
     }
 
     public enum DemoOptions
@@ -50,14 +50,20 @@ After installing the library you can convert C# objects directly into HTML forms
 
 <!-- Raw HTML form -->
 <form method="post">
-    @ObjToForm.ConvertToRawHtmlForm(Model.Obj)
+    @ObjToForm.ConvertToRawHtmlForm(typeof(DemoObj))
+    <!-- Or if you are using Model Binding -->
+    @ObjToForm.ConvertToRawHtmlForm(typeof(DemoObj), "Obj", true)
 </form>
+
+<!-- Or using Model Binding -->
 
 <hr>
 
 <!-- Bootstrap-styled form -->
 <form method="post">
-    @ObjToForm.ConvertToBootstrapForm(Model.Obj)
+    @ObjToForm.ConvertToBootstrapForm(typeof(DemoObj))
+    <!-- Or if you are using Model Binding -->
+    @ObjToForm.ConvertToBootstrapForm(typeof(DemoObj), "Obj", true)
 </form>
 
 ```
@@ -73,7 +79,23 @@ Bootstrap-styled form
 
 <img width="1367" height="480" alt="image" src="https://github.com/user-attachments/assets/7ea47cdc-ba28-4946-a261-8421e158fcb6" />
 
-## Notes
-- As shown in the previous example, only public attributes are rendered.
-- Using Bootstrap-styled forms requires to previously add bootstrap to your project
+### Receive the values in your controller as usual
 
+```csharp
+public IActionResult OnPost(string PublicString, int PublicInt, DateTime PublicDateTime, float PublicFloat, bool PublicBool, DemoOptions PublicOptionsEnum)
+{
+    ...
+    return Page();
+}
+
+//Or, if you are using ModelBinding
+public IActionResult OnPost(DemoObj Obj)
+{
+    ...
+    return Page();
+}
+
+```
+## Notes
+- As shown in the previous example, only public properties are rendered.
+- Using Bootstrap-styled forms requires to previously add bootstrap to your project
