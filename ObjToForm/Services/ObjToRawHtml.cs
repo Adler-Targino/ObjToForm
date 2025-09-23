@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Html;
-using ObjToForm.DataTypes.Structs;
+using ObjToForm.DataTypes.Objects;
 using ObjToForm.Interfaces;
 using ObjToForm.Utils;
 
@@ -17,7 +17,7 @@ namespace ObjToForm.Services
             {
                 custAttr = new CustomAttributes(prop.CustomAttributes);
 
-                result += $"<label for='{prop.PropertyName}'>{custAttr.CustomName ?? prop.PropertyName}</label><br>";
+                result += $"<label for='{prop.PropertyName}'>{custAttr.Label ?? prop.PropertyName}</label><br>";
 
                 switch (prop.PropertyType)
                 {

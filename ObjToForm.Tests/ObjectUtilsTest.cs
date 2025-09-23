@@ -14,7 +14,7 @@ namespace ObjToForm.Tests
 
     public class DemoObj
     {
-        [CustomName("My Custom String")]
+        [Label("My Custom String")]
         public string PublicString { get; set; }
         public int PublicInt { get; set; }
         public DateTime PublicDateTime { get; set; }

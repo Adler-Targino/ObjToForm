@@ -1,4 +1,4 @@
-﻿using ObjToForm.DataTypes.Structs;
+﻿using ObjToForm.DataTypes.Objects;
 using System.Reflection;
 
 namespace ObjToForm.Utils

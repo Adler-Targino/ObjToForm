@@ -1,6 +1,6 @@
 ﻿using ObjToForm.DataTypes.Attributes;
 
-namespace ObjToForm.DataTypes.Structs
+namespace ObjToForm.DataTypes.Objects
 {
     public struct PropertyData
     {

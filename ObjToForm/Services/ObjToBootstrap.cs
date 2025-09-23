@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Html;
-using ObjToForm.DataTypes.Attributes;
-using ObjToForm.DataTypes.Structs;
+using ObjToForm.DataTypes.Objects;
 using ObjToForm.Interfaces;
 using ObjToForm.Utils;
+using System.Text;
 
 namespace ObjToForm.Services
 {
@@ -13,7 +13,7 @@ namespace ObjToForm.Services
         {
             var properties = ObjectUtils.GetPropertyList(obj, prefix, modelBinding);
 
-            string result = "";
+            var result = new StringBuilder();
             foreach (var prop in properties)
             {
                 custAttr = new CustomAttributes(prop.CustomAttributes);
@@ -52,67 +52,133 @@ namespace ObjToForm.Services
                 };
             }
 
-            result += "<button type='submit' class='btn btn-primary'>Submit</button>";
+            result.Append("<button type='submit' class='btn btn-primary'>Submit</button>");
 
-            return new HtmlString(result);
+            return new HtmlString(result.ToString());
         }
 
-        private void AddNumberInput(ref string s, PropertyData prop)
+        private void AddNumberInput(ref StringBuilder s, PropertyData prop)
         {
-            s +=
-            $"<div class='form-group my-3'>" +
-            $"<label for='{prop.PropertyName}'>{custAttr.CustomName ?? prop.PropertyName}</label>" +
-            $"<input type='number' id='{prop.PropertyName}' step='any' name='{prop.PropertyName}' class='form-control'>" +
-            $"</div>";            
+            s.Append(
+                $"<div " +
+                $"class='{string.Join(" ", custAttr.DivClasses)} {(!custAttr.OverrideDivClasses ? "form-group my-3" : "")}'" +
+                $"style='{(custAttr.DivStyles.Any() ? string.Join(";", custAttr.DivStyles) : "")}'" +
+                $">" +
+                $"{(custAttr.LabelEnabled ?
+                $"<label " +
+                $"class='{(custAttr.LabelClasses.Any() ? string.Join(" ", custAttr.LabelClasses) : "")}'" +
+                $"style='{(custAttr.LabelStyles.Any() ? string.Join(";", custAttr.LabelStyles) : "")}'" +
+                $"for='{prop.PropertyName}'>{custAttr.Label ?? prop.PropertyName}</label>" : "")}" +
+                $"<input " +
+                $"type='number' id='{prop.PropertyName}' step='any' name='{prop.PropertyName}' " +
+                $"class='{string.Join(" ", custAttr.InputClasses)} {(!custAttr.OverrideInputClasses ? "form-control" : "")}'" +
+                $"style='{(custAttr.InputStyles.Any() ? string.Join(";", custAttr.InputStyles) : "")}'" +
+                $"{(custAttr.HtmlAttributes.Any() ? string.Join(" ", custAttr.HtmlAttributes) : "")}>" +
+                $"</div>"
+            );            
         }
 
-        private void AddTextInput(ref string s, PropertyData prop)
+        private void AddTextInput(ref StringBuilder s, PropertyData prop)
         {
-            s +=
-            $"<div class='form-group my-3'>" +
-            $"<label for='{prop.PropertyName}'>{custAttr.CustomName ?? prop.PropertyName}</label>" +
-            $"<input type='text' id='{prop.PropertyName}' step='any' name='{prop.PropertyName}' class='form-control'>" +
-            $"</div>";
+            s.Append(
+                $"<div " +
+                $"class='{string.Join(" ", custAttr.DivClasses)} {(!custAttr.OverrideDivClasses ? "form-group my-3" : "")}'" +
+                $"style='{(custAttr.DivStyles.Any() ? string.Join(";", custAttr.DivStyles) : "")}'" +
+                $">" +
+                $"{(custAttr.LabelEnabled ?
+                $"<label " +
+                $"class='{(custAttr.LabelClasses.Any() ? string.Join(" ", custAttr.LabelClasses) : "")}'" +
+                $"style='{(custAttr.LabelStyles.Any() ? string.Join(";", custAttr.LabelStyles) : "")}'" +
+                $"for='{prop.PropertyName}'>{custAttr.Label ?? prop.PropertyName}</label>" : "")}" +
+                $"<input type='text' id='{prop.PropertyName}' name='{prop.PropertyName}' " +
+                $"class='{string.Join(" ", custAttr.InputClasses)} {(!custAttr.OverrideInputClasses ? "form-control" : "")}'" +
+                $"style='{(custAttr.InputStyles.Any() ? string.Join(";", custAttr.InputStyles) : "")}'" +
+                $"{(custAttr.HtmlAttributes.Any() ? string.Join(" ", custAttr.HtmlAttributes) : "")}>" +
+                $"</div>"
+            );
         }
 
-        private void AddCharInput(ref string s, PropertyData prop)
+        private void AddCharInput(ref StringBuilder s, PropertyData prop)
         {
-            s +=
-            $"<div class='form-group my-3'>" +
-            $"<label for='{prop.PropertyName}'>{custAttr.CustomName ?? prop.PropertyName}</label>" +
-            $"<input type='text' id='{prop.PropertyName}' step='any' name='{prop.PropertyName}' class='form-control' maxlength='1' size='1'>" +
-            $"</div>";
+            s.Append(
+                $"<div " +
+                $"class='{string.Join(" ", custAttr.DivClasses)} {(!custAttr.OverrideDivClasses ? "form-group my-3" : "")}'" +
+                $"style='{(custAttr.DivStyles.Any() ? string.Join(";", custAttr.DivStyles) : "")}'" +
+                $">" +
+                $"{(custAttr.LabelEnabled ?
+                $"<label " +
+                $"class='{(custAttr.LabelClasses.Any() ? string.Join(" ", custAttr.LabelClasses) : "")}'" +
+                $"style='{(custAttr.LabelStyles.Any() ? string.Join(";", custAttr.LabelStyles) : "")}'" +
+                $"for='{prop.PropertyName}'>{custAttr.Label ?? prop.PropertyName}</label>" : "")}" +
+                $"<input type='text' id='{prop.PropertyName}' name='{prop.PropertyName}' maxlength='1' size='1'" +
+                $"class='{string.Join(" ", custAttr.InputClasses)} {(!custAttr.OverrideInputClasses ? "form-control" : "")}'" +
+                $"style='{(custAttr.InputStyles.Any() ? string.Join(";", custAttr.InputStyles) : "")}'" +
+                $"{(custAttr.HtmlAttributes.Any() ? string.Join(" ", custAttr.HtmlAttributes) : "")}>" +
+                $"</div>"
+            );
         }
 
-        private void AddCheckInput(ref string s, PropertyData prop)
+        private void AddCheckInput(ref StringBuilder s, PropertyData prop)
         {
-            s +=
-            $"<div class='form-check my-3'>" +
-            $"<label for='{prop.PropertyName}' class='form-check-label'>{custAttr.CustomName ?? prop.PropertyName}</label>" +
-            $"<input type='checkbox' id='{prop.PropertyName}' value='true' name='{prop.PropertyName}' class='form-check-input'>" +
-            $"</div>";
+            s.Append(
+                $"<div " +
+                $"class='{string.Join(" ", custAttr.DivClasses)} {(!custAttr.OverrideDivClasses ? "form-check my-3" : "")}'" +
+                $"style='{(custAttr.DivStyles.Any() ? string.Join(";", custAttr.DivStyles) : "")}'" +
+                $">" +
+                $"{(custAttr.LabelEnabled ?
+                $"<label " +
+                $"class='{string.Join(" ", custAttr.LabelClasses)} {(!custAttr.OverrideLabelClasses ? "form-check-label" : "")}'" +
+                $"style='{(custAttr.LabelStyles.Any() ? string.Join(";", custAttr.LabelStyles) : "")}'" +
+                $"for='{prop.PropertyName}'>{custAttr.Label ?? prop.PropertyName}</label>" : "")}" +
+                $"<input type='checkbox' id='{prop.PropertyName}' value='true' name='{prop.PropertyName}' " +
+                $"class='{string.Join(" ", custAttr.InputClasses)} {(!custAttr.OverrideInputClasses ? "form-check-input" : "")}'" +
+                $"style='{(custAttr.InputStyles.Any() ? string.Join(";", custAttr.InputStyles) : "")}'" +
+                $"{(custAttr.HtmlAttributes.Any() ? string.Join(" ", custAttr.HtmlAttributes) : "")}>" +
+                $"</div>"
+            );
         }
 
-        private void AddDateInput(ref string s, PropertyData prop)
+        private void AddDateInput(ref StringBuilder s, PropertyData prop)
         {
-            s +=
-            $"<div class='form-group my-3'>" +
-            $"<label for='{prop.PropertyName}' class='form-check-label'>{custAttr.CustomName ?? prop.PropertyName}</label>" +
-            $"<input type='date' id='{prop.PropertyName}' value='true' name='{prop.PropertyName}' class='form-control'>" +
-            $"</div>";
+            s.Append(
+                $"<div " +
+                $"class='{string.Join(" ", custAttr.DivClasses)} {(!custAttr.OverrideDivClasses ? "form-group my-3" : "")}'" +
+                $"style='{(custAttr.DivStyles.Any() ? string.Join(";", custAttr.DivStyles) : "")}'" +
+                $">" +
+                $"{(custAttr.LabelEnabled ?
+                $"<label " +
+                $"class='{(custAttr.LabelClasses.Any() ? string.Join(" ", custAttr.LabelClasses) : "")}'" +
+                $"style='{(custAttr.LabelStyles.Any() ? string.Join(";", custAttr.LabelStyles) : "")}'" +
+                $"for='{prop.PropertyName}'>{custAttr.Label ?? prop.PropertyName}</label>" : "")}" +
+                $"<input type='date' id='{prop.PropertyName}' name='{prop.PropertyName}' " +
+                $"class='{string.Join(" ", custAttr.InputClasses)} {(!custAttr.OverrideInputClasses ? "form-control" : "")}'" +
+                $"style='{(custAttr.InputStyles.Any() ? string.Join(";", custAttr.InputStyles) : "")}'" +
+                $"{(custAttr.HtmlAttributes.Any() ? string.Join(" ", custAttr.HtmlAttributes) : "")}>" +
+                $"</div>"
+            );
         }
 
-        private void AddSelect(ref string s, PropertyData prop)
+        private void AddSelect(ref StringBuilder s, PropertyData prop)
         {
-            s +=
-            $"<div class='form-group my-3'>" +
-            $"<label for='{prop.PropertyName}'>{custAttr.CustomName ?? prop.PropertyName}</label>" +
-            string.Join("",
-                    Enum.GetNames(prop.PropertyType)
-                        .Select(v => $"<option value='{v}'>{v}</option>"))
-                        .Insert(0, $"<select id='{prop.PropertyName}' name='{prop.PropertyName}' class='form-select'>") +
-                        "</select>" +
-            $"</div>";            
+            s.Append(
+                $"<div " +
+                $"class='{string.Join(" ", custAttr.DivClasses)} {(!custAttr.OverrideDivClasses ? "form-group my-3" : "")}'" +
+                $"style='{(custAttr.DivStyles.Any() ? string.Join(";", custAttr.DivStyles) : "")}'" +
+                $">" +
+                $"{(custAttr.LabelEnabled ? 
+                $"<label " +
+                $"class='{(custAttr.LabelClasses.Any() ? string.Join(" ", custAttr.LabelClasses) : "")}'" +
+                $"style='{(custAttr.LabelStyles.Any() ? string.Join(";", custAttr.LabelStyles) : "")}'" +
+                $"for='{prop.PropertyName}'>{custAttr.Label ?? prop.PropertyName}</label>" :"")}" +
+                string.Join("",
+                        Enum.GetNames(prop.PropertyType)
+                            .Select(v => $"<option value='{v}'>{v}</option>"))
+                            .Insert(0, $"<select id='{prop.PropertyName}' name='{prop.PropertyName}' " +
+                                       $"class='{string.Join(" ", custAttr.InputClasses)} {(!custAttr.OverrideInputClasses ? "form-select" : "")}'" +
+                                       $"{(custAttr.HtmlAttributes.Any() ? string.Join(" ", custAttr.HtmlAttributes) : "")}") +
+                            "</select>" +
+                $"</div>"
+            );            
         }
     }
 }
