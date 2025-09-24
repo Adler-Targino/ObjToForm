@@ -164,7 +164,6 @@ public class CustomDemoObj
 
     [Label("Notes")]
     [InputClass("form-control")]
-    [HtmlAttribute("rows=4")]
     public string Notes { get; set; }
 }
 ```
