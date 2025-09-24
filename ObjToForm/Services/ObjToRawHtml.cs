@@ -2,6 +2,7 @@
 using ObjToForm.DataTypes.Objects;
 using ObjToForm.Interfaces;
 using ObjToForm.Utils;
+using System.Text;
 
 namespace ObjToForm.Services
 {
@@ -12,12 +13,10 @@ namespace ObjToForm.Services
         {
             var properties = ObjectUtils.GetPropertyList(obj, prefix, modelBinding);
 
-            string result = "";
+            var result = new StringBuilder();
             foreach (var prop in properties)
             {
                 custAttr = new CustomAttributes(prop.CustomAttributes);
-
-                result += $"<label for='{prop.PropertyName}'>{custAttr.Label ?? prop.PropertyName}</label><br>";
 
                 switch (prop.PropertyType)
                 {
@@ -54,42 +53,83 @@ namespace ObjToForm.Services
                 };
             }
 
-            result += "<br><input type='submit' value='Submit'>";
+            result.Append("<br><input type='submit' value='Submit'>");
 
-            return new HtmlString(result);
+            return new HtmlString(result.ToString());
         }
 
-        private void AddNumberInput(ref string s, PropertyData prop)
+        private void AddNumberInput(ref StringBuilder s, PropertyData prop)
         {
-            s += $"<input type='number' id='{prop.PropertyName}' step='any' name='{prop.PropertyName}'><br>";
+            custAttr.HtmlAttributes.Add("type='number'");
+            custAttr.HtmlAttributes.Add("step='any'");
+
+            s.Append(HtmlUtils.BuildDiv(custAttr));
+            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
+            s.Append("<br>");
+            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName));
+            s.Append("<br>");
+            s.Append("</div>");
         }
 
-        private void AddTextInput(ref string s, PropertyData prop)
+        private void AddTextInput(ref StringBuilder s, PropertyData prop)
         {
-            s += $"<input type='text' id='{prop.PropertyName}' name='{prop.PropertyName}'><br>";
+            custAttr.HtmlAttributes.Add("type='text'");
+
+            s.Append(HtmlUtils.BuildDiv(custAttr));
+            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
+            s.Append("<br>");
+            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName));
+            s.Append("<br>");
+            s.Append("</div>");
         }
 
-        private void AddCharInput(ref string s, PropertyData prop)
+        private void AddCharInput(ref StringBuilder s, PropertyData prop)
         {
-            s += $"<input type='text' id='{prop.PropertyName}' name='{prop.PropertyName}' maxlength='1' size='1'><br>";
+            custAttr.HtmlAttributes.Add("type='text'");
+            custAttr.HtmlAttributes.Add("maxlength='1'");
+            custAttr.HtmlAttributes.Add("size='1'");
+
+            s.Append(HtmlUtils.BuildDiv(custAttr));
+            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
+            s.Append("<br>");
+            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName));
+            s.Append("<br>");
+            s.Append("</div>");
         }
 
-        private void AddCheckInput(ref string s, PropertyData prop)
+        private void AddCheckInput(ref StringBuilder s, PropertyData prop)
         {
-            s += $"<input type='checkbox' id='{prop.PropertyName}' value='true' name='{prop.PropertyName}'><br>";
+            custAttr.HtmlAttributes.Add("type='checkbox'");
+            custAttr.HtmlAttributes.Add("value='true'");
+
+            s.Append(HtmlUtils.BuildDiv(custAttr));
+            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
+            s.Append("<br>");
+            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName));
+            s.Append("<br>");
+            s.Append("</div>");
         }
 
-        private void AddDateInput(ref string s, PropertyData prop)
+        private void AddDateInput(ref StringBuilder s, PropertyData prop)
         {
-            s += $"<input type='date' id='{prop.PropertyName}' name='{prop.PropertyName}'><br>";
+            custAttr.HtmlAttributes.Add("type='date'");
+
+            s.Append(HtmlUtils.BuildDiv(custAttr));
+            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
+            s.Append("<br>");
+            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName));
+            s.Append("<br>");
+            s.Append("</div>");
         }
 
-        private void AddSelect(ref string s, PropertyData prop)
+        private void AddSelect(ref StringBuilder s, PropertyData prop)
         {
-            s += string.Join("", Enum.GetNames(prop.PropertyType)
-                                     .Select(v => $"<option value='{v}'>{v}</option>"))
-                                     .Insert(0, $"<select id='{prop.PropertyName}' name='{prop.PropertyName}'>") +
-                                     "</select><br>";
+            s.Append(HtmlUtils.BuildDiv(custAttr));
+            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
+            s.Append("<br>");
+            s.Append(HtmlUtils.BuildSelect(custAttr, prop));
+            s.Append("<br>");
+            s.Append("</div>");
         }
     }
 }

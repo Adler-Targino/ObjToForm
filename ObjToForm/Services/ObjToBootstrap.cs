@@ -59,126 +59,64 @@ namespace ObjToForm.Services
 
         private void AddNumberInput(ref StringBuilder s, PropertyData prop)
         {
-            s.Append(
-                $"<div " +
-                $"class='{string.Join(" ", custAttr.DivClasses)} {(!custAttr.OverrideDivClasses ? "form-group my-3" : "")}'" +
-                $"style='{(custAttr.DivStyles.Any() ? string.Join(";", custAttr.DivStyles) : "")}'" +
-                $">" +
-                $"{(custAttr.LabelEnabled ?
-                $"<label " +
-                $"class='{(custAttr.LabelClasses.Any() ? string.Join(" ", custAttr.LabelClasses) : "")}'" +
-                $"style='{(custAttr.LabelStyles.Any() ? string.Join(";", custAttr.LabelStyles) : "")}'" +
-                $"for='{prop.PropertyName}'>{custAttr.Label ?? prop.PropertyName}</label>" : "")}" +
-                $"<input " +
-                $"type='number' id='{prop.PropertyName}' step='any' name='{prop.PropertyName}' " +
-                $"class='{string.Join(" ", custAttr.InputClasses)} {(!custAttr.OverrideInputClasses ? "form-control" : "")}'" +
-                $"style='{(custAttr.InputStyles.Any() ? string.Join(";", custAttr.InputStyles) : "")}'" +
-                $"{(custAttr.HtmlAttributes.Any() ? string.Join(" ", custAttr.HtmlAttributes) : "")}>" +
-                $"</div>"
-            );            
+            custAttr.HtmlAttributes.Add("type='number'");
+            custAttr.HtmlAttributes.Add("step='any'");
+
+            s.Append(HtmlUtils.BuildDiv(custAttr, "form-group my-3"));
+            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
+            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, "form-control"));
+            s.Append("</div>");            
         }
 
         private void AddTextInput(ref StringBuilder s, PropertyData prop)
         {
-            s.Append(
-                $"<div " +
-                $"class='{string.Join(" ", custAttr.DivClasses)} {(!custAttr.OverrideDivClasses ? "form-group my-3" : "")}'" +
-                $"style='{(custAttr.DivStyles.Any() ? string.Join(";", custAttr.DivStyles) : "")}'" +
-                $">" +
-                $"{(custAttr.LabelEnabled ?
-                $"<label " +
-                $"class='{(custAttr.LabelClasses.Any() ? string.Join(" ", custAttr.LabelClasses) : "")}'" +
-                $"style='{(custAttr.LabelStyles.Any() ? string.Join(";", custAttr.LabelStyles) : "")}'" +
-                $"for='{prop.PropertyName}'>{custAttr.Label ?? prop.PropertyName}</label>" : "")}" +
-                $"<input type='text' id='{prop.PropertyName}' name='{prop.PropertyName}' " +
-                $"class='{string.Join(" ", custAttr.InputClasses)} {(!custAttr.OverrideInputClasses ? "form-control" : "")}'" +
-                $"style='{(custAttr.InputStyles.Any() ? string.Join(";", custAttr.InputStyles) : "")}'" +
-                $"{(custAttr.HtmlAttributes.Any() ? string.Join(" ", custAttr.HtmlAttributes) : "")}>" +
-                $"</div>"
-            );
+            custAttr.HtmlAttributes.Add("type='text'");
+
+            s.Append(HtmlUtils.BuildDiv(custAttr, "form-group my-3"));
+            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
+            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, "form-control"));
+            s.Append("</div>");
         }
 
         private void AddCharInput(ref StringBuilder s, PropertyData prop)
         {
-            s.Append(
-                $"<div " +
-                $"class='{string.Join(" ", custAttr.DivClasses)} {(!custAttr.OverrideDivClasses ? "form-group my-3" : "")}'" +
-                $"style='{(custAttr.DivStyles.Any() ? string.Join(";", custAttr.DivStyles) : "")}'" +
-                $">" +
-                $"{(custAttr.LabelEnabled ?
-                $"<label " +
-                $"class='{(custAttr.LabelClasses.Any() ? string.Join(" ", custAttr.LabelClasses) : "")}'" +
-                $"style='{(custAttr.LabelStyles.Any() ? string.Join(";", custAttr.LabelStyles) : "")}'" +
-                $"for='{prop.PropertyName}'>{custAttr.Label ?? prop.PropertyName}</label>" : "")}" +
-                $"<input type='text' id='{prop.PropertyName}' name='{prop.PropertyName}' maxlength='1' size='1'" +
-                $"class='{string.Join(" ", custAttr.InputClasses)} {(!custAttr.OverrideInputClasses ? "form-control" : "")}'" +
-                $"style='{(custAttr.InputStyles.Any() ? string.Join(";", custAttr.InputStyles) : "")}'" +
-                $"{(custAttr.HtmlAttributes.Any() ? string.Join(" ", custAttr.HtmlAttributes) : "")}>" +
-                $"</div>"
-            );
+            custAttr.HtmlAttributes.Add("type='text'");
+            custAttr.HtmlAttributes.Add("maxlength='1'");
+            custAttr.HtmlAttributes.Add("size='1'");
+
+            s.Append(HtmlUtils.BuildDiv(custAttr, "form-group my-3"));
+            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
+            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, "form-control"));
+            s.Append("</div>");
         }
 
         private void AddCheckInput(ref StringBuilder s, PropertyData prop)
         {
-            s.Append(
-                $"<div " +
-                $"class='{string.Join(" ", custAttr.DivClasses)} {(!custAttr.OverrideDivClasses ? "form-check my-3" : "")}'" +
-                $"style='{(custAttr.DivStyles.Any() ? string.Join(";", custAttr.DivStyles) : "")}'" +
-                $">" +
-                $"{(custAttr.LabelEnabled ?
-                $"<label " +
-                $"class='{string.Join(" ", custAttr.LabelClasses)} {(!custAttr.OverrideLabelClasses ? "form-check-label" : "")}'" +
-                $"style='{(custAttr.LabelStyles.Any() ? string.Join(";", custAttr.LabelStyles) : "")}'" +
-                $"for='{prop.PropertyName}'>{custAttr.Label ?? prop.PropertyName}</label>" : "")}" +
-                $"<input type='checkbox' id='{prop.PropertyName}' value='true' name='{prop.PropertyName}' " +
-                $"class='{string.Join(" ", custAttr.InputClasses)} {(!custAttr.OverrideInputClasses ? "form-check-input" : "")}'" +
-                $"style='{(custAttr.InputStyles.Any() ? string.Join(";", custAttr.InputStyles) : "")}'" +
-                $"{(custAttr.HtmlAttributes.Any() ? string.Join(" ", custAttr.HtmlAttributes) : "")}>" +
-                $"</div>"
-            );
+            custAttr.HtmlAttributes.Add("type='checkbox'");
+            custAttr.HtmlAttributes.Add("value='true'");
+
+            s.Append(HtmlUtils.BuildDiv(custAttr, "form-check my-3"));
+            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, "form-check-input"));
+            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName, "form-check-label"));
+            s.Append("</div>");            
         }
 
         private void AddDateInput(ref StringBuilder s, PropertyData prop)
         {
-            s.Append(
-                $"<div " +
-                $"class='{string.Join(" ", custAttr.DivClasses)} {(!custAttr.OverrideDivClasses ? "form-group my-3" : "")}'" +
-                $"style='{(custAttr.DivStyles.Any() ? string.Join(";", custAttr.DivStyles) : "")}'" +
-                $">" +
-                $"{(custAttr.LabelEnabled ?
-                $"<label " +
-                $"class='{(custAttr.LabelClasses.Any() ? string.Join(" ", custAttr.LabelClasses) : "")}'" +
-                $"style='{(custAttr.LabelStyles.Any() ? string.Join(";", custAttr.LabelStyles) : "")}'" +
-                $"for='{prop.PropertyName}'>{custAttr.Label ?? prop.PropertyName}</label>" : "")}" +
-                $"<input type='date' id='{prop.PropertyName}' name='{prop.PropertyName}' " +
-                $"class='{string.Join(" ", custAttr.InputClasses)} {(!custAttr.OverrideInputClasses ? "form-control" : "")}'" +
-                $"style='{(custAttr.InputStyles.Any() ? string.Join(";", custAttr.InputStyles) : "")}'" +
-                $"{(custAttr.HtmlAttributes.Any() ? string.Join(" ", custAttr.HtmlAttributes) : "")}>" +
-                $"</div>"
-            );
+            custAttr.HtmlAttributes.Add("type='date'");
+
+            s.Append(HtmlUtils.BuildDiv(custAttr, "form-group my-3"));
+            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
+            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, "form-control"));
+            s.Append("</div>");
         }
 
         private void AddSelect(ref StringBuilder s, PropertyData prop)
         {
-            s.Append(
-                $"<div " +
-                $"class='{string.Join(" ", custAttr.DivClasses)} {(!custAttr.OverrideDivClasses ? "form-group my-3" : "")}'" +
-                $"style='{(custAttr.DivStyles.Any() ? string.Join(";", custAttr.DivStyles) : "")}'" +
-                $">" +
-                $"{(custAttr.LabelEnabled ? 
-                $"<label " +
-                $"class='{(custAttr.LabelClasses.Any() ? string.Join(" ", custAttr.LabelClasses) : "")}'" +
-                $"style='{(custAttr.LabelStyles.Any() ? string.Join(";", custAttr.LabelStyles) : "")}'" +
-                $"for='{prop.PropertyName}'>{custAttr.Label ?? prop.PropertyName}</label>" :"")}" +
-                string.Join("",
-                        Enum.GetNames(prop.PropertyType)
-                            .Select(v => $"<option value='{v}'>{v}</option>"))
-                            .Insert(0, $"<select id='{prop.PropertyName}' name='{prop.PropertyName}' " +
-                                       $"class='{string.Join(" ", custAttr.InputClasses)} {(!custAttr.OverrideInputClasses ? "form-select" : "")}'" +
-                                       $"{(custAttr.HtmlAttributes.Any() ? string.Join(" ", custAttr.HtmlAttributes) : "")}") +
-                            "</select>" +
-                $"</div>"
-            );            
+            s.Append(HtmlUtils.BuildDiv(custAttr, "form-group my-3"));
+            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
+            s.Append(HtmlUtils.BuildSelect(custAttr, prop, "form-select"));
+            s.Append("</div>");        
         }
     }
 }
