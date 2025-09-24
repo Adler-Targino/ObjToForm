@@ -1,6 +1,6 @@
 ﻿namespace ObjToForm.DataTypes.Attributes
 {
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public class HtmlAttributeAttribute : Attribute
     {
         public string Attribute { get; set; }        

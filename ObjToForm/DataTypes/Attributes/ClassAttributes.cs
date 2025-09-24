@@ -1,6 +1,6 @@
 ﻿namespace ObjToForm.DataTypes.Attributes
 {
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public class DivClassAttribute : Attribute
     {
         public string Class { get; set; }
@@ -12,7 +12,7 @@
         }
     }
 
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public class LabelClassAttribute : Attribute
     {
         public string Class { get; set; }
@@ -24,7 +24,7 @@
         }
     }
 
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public class InputClassAttribute : Attribute
     {
         public string Class { get; set; }
