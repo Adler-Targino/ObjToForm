@@ -99,3 +99,76 @@ public IActionResult OnPost(DemoObj Obj)
 ## Notes
 - As shown in the previous example, only public properties are rendered.
 - Using Bootstrap-styled forms requires to previously add bootstrap to your project
+
+---
+# Advanced Usage
+
+ObjToForm has a few more tools that can be helpfull if you intend to create more elaborated forms
+
+## Customization with Attributes
+
+Attributes can be applied directly to the class properties, making it possible to define CSS classes, inline styles, labels, or even custom HTML attributes for the rendered elements.
+
+### Available Attributes
+
+- **[DivClass("className", bool override = false)]**  
+  Sets the CSS class(es) for the `<div>` wrapping the field.  
+  The `override` parameter defines whether to replace the default classes (in case of using `ConvertToBootstrapForm`) or just append them.
+
+- **[LabelClass("className", bool override = false)]**  
+  Sets the CSS class(es) for the `<label>` of the field.
+
+- **[InputClass("className", bool override = false)]**  
+  Sets the CSS class(es) for the `<input>` or `<select>` element.
+
+- **[DivStyle("style")]**  
+  Adds inline CSS styles to the `<div>`
+
+- **[LabelStyle("style")]**  
+  Adds inline CSS styles to the `<label>`.
+
+- **[InputStyle("style")]**  
+  Adds inline CSS styles to the `<input>`.
+
+- **[Label(bool enabled)]**
+  Hides the label when `enabled = false`
+
+- **[Label("text")]**  
+  Sets the text of the label
+
+- **[HtmlAttribute("attribute=value")]**  
+  Adds custom HTML attributes directly to the field (e.g., `maxlength=50`, `data-custom="123"`).
+
+Quick Note: Multiple attributes (including attributes of the same type) can be assigned for each property
+
+### Example Object 
+
+```csharp
+public class CustomDemoObj
+{
+    [Label("Full Name")]
+    [InputClass("form-control mb-2")]
+    [DivClass("col-md-6")]
+    [HtmlAttribute("placeholder=Enter your name")]
+    public string Name { get; set; }
+
+    [Label("Birth Date")]
+    [InputClass("form-control")]
+    [InputStyle("max-width:200px;")]
+    public DateTime BirthDate { get; set; }
+
+    [Label("Email", true)]
+    [InputClass("form-control")]
+    [HtmlAttribute("type=email")]
+    public string Email { get; set; }
+
+    [Label("Notes")]
+    [InputClass("form-control")]
+    [HtmlAttribute("rows=4")]
+    public string Notes { get; set; }
+}
+```
+Calling the `ConvertToRawHtmlForm` method while passing this object as a paramter will result in the following result:
+
+<img width="1349" height="447" alt="image" src="https://github.com/user-attachments/assets/16ec6b2a-1c8c-456a-aeaa-accf2e4cd2e0" />
+
