@@ -122,7 +122,7 @@ Attributes can be applied directly to the class properties, making it possible t
   Sets the CSS class(es) for the `<input>` or `<select>` element.
 
 - **[DivStyle("style")]**  
-  Adds inline CSS styles to the `<div>`
+  Adds inline CSS styles to the `<div>`.
 
 - **[LabelStyle("style")]**  
   Adds inline CSS styles to the `<label>`.
@@ -130,11 +130,11 @@ Attributes can be applied directly to the class properties, making it possible t
 - **[InputStyle("style")]**  
   Adds inline CSS styles to the `<input>`.
 
-- **[Label(bool enabled)]**
-  Hides the label when `enabled = false`
+- **[Label(bool enabled)]**  
+  Hides the label when `enabled = false`.
 
 - **[Label("text")]**  
-  Sets the text of the label
+  Sets the text of the label.
 
 - **[HtmlAttribute("attribute=value")]**  
   Adds custom HTML attributes directly to the field (e.g., `maxlength=50`, `data-custom="123"`).
