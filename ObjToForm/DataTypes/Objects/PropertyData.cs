@@ -6,6 +6,7 @@ namespace ObjToForm.DataTypes.Objects
     {
         public string PropertyName { get; set; }
         public Type PropertyType { get; set; }
+        public object? PropertyValue { get; set; }
         public object[] CustomAttributes { get; set; }
     }           
 }

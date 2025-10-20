@@ -9,7 +9,7 @@ namespace ObjToForm.Services
     internal class ObjToRawHtml : IObjectConvertService
     {
         private CustomAttributes custAttr;
-        public IHtmlContent ConvertToForm(Type obj, string prefix, bool modelBinding)
+        public IHtmlContent ConvertToForm(object obj, string prefix, bool modelBinding)
         {
             var properties = ObjectUtils.GetPropertyList(obj, prefix, modelBinding);
 
@@ -66,7 +66,7 @@ namespace ObjToForm.Services
             s.Append(HtmlUtils.BuildDiv(custAttr));
             s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
             s.Append("<br>");
-            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName));
+            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, prop.PropertyValue));
             s.Append("<br>");
             s.Append("</div>");
         }
@@ -78,7 +78,7 @@ namespace ObjToForm.Services
             s.Append(HtmlUtils.BuildDiv(custAttr));
             s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
             s.Append("<br>");
-            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName));
+            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, prop.PropertyValue));
             s.Append("<br>");
             s.Append("</div>");
         }
@@ -92,7 +92,7 @@ namespace ObjToForm.Services
             s.Append(HtmlUtils.BuildDiv(custAttr));
             s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
             s.Append("<br>");
-            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName));
+            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, prop.PropertyValue));
             s.Append("<br>");
             s.Append("</div>");
         }
@@ -101,11 +101,13 @@ namespace ObjToForm.Services
         {
             custAttr.HtmlAttributes.Add("type='checkbox'");
             custAttr.HtmlAttributes.Add("value='true'");
+            if ((bool?)prop.PropertyValue == true)
+                custAttr.HtmlAttributes.Add("checked");
 
             s.Append(HtmlUtils.BuildDiv(custAttr));
             s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
             s.Append("<br>");
-            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName));
+            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, null));
             s.Append("<br>");
             s.Append("</div>");
         }
@@ -113,11 +115,13 @@ namespace ObjToForm.Services
         private void AddDateInput(ref StringBuilder s, PropertyData prop)
         {
             custAttr.HtmlAttributes.Add("type='date'");
+            if ((DateTime?)prop.PropertyValue != DateTime.MinValue)
+                custAttr.HtmlAttributes.Add($"value='{((DateTime)prop.PropertyValue).ToString("yyyy-MM-dd")}'");
 
             s.Append(HtmlUtils.BuildDiv(custAttr));
             s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
             s.Append("<br>");
-            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName));
+            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, null));
             s.Append("<br>");
             s.Append("</div>");
         }

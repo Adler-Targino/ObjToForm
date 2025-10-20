@@ -14,12 +14,15 @@ namespace ObjToForm.Tests
 
     public class DemoObj
     {
-        [Label("My Custom String")]
-        public string PublicString { get; set; }
-        public int PublicInt { get; set; }
-        public DateTime PublicDateTime { get; set; }
-        public bool PublicBool { get; set; }
+        public DateTime DateTime { get; set; }
         public DemoOptions PublicOptionsEnum { get; set; }
+        public DemoObj2 DemoObj2 { get; set; }
+    }
+
+    public class DemoObj2
+    {
+        public string PublicString2 { get; set; }
+        public bool PublicBool2 { get; set; }
     }
 
     public class ObjectUtilsTest
@@ -27,7 +30,9 @@ namespace ObjToForm.Tests
         [Fact]
         public void Test1()
         {
-            ObjToForm.ConvertToBootstrapForm(typeof(DemoObj), "Obj", true);
+            DemoObj Obj = new DemoObj();
+
+            ObjToForm.ConvertToBootstrapForm(Obj, "Obj", true);
 
             Assert.Equal(true, true);
         }

@@ -26,10 +26,10 @@ namespace ObjToForm.Utils
                    $"for='{name}'>{custAttr.Label ?? name}</label>" : "")}";
         }
 
-        public static string BuildInput(CustomAttributes custAttr, string name, string defaultClasses = "")
+        public static string BuildInput(CustomAttributes custAttr, string name, object? value, string defaultClasses = "")
         {
             return $"<input " +
-                   $"id='{name}' name='{name}' " +
+                   $"id='{name}' name='{name}' {(value != null ? $"value='{value}'" : "")}" +
                    $"class='{string.Join(" ", custAttr.InputClasses)} {(!custAttr.OverrideInputClasses ? defaultClasses : "")}'" +
                    $"style='{(custAttr.InputStyles.Any() ? string.Join(";", custAttr.InputStyles) : "")}'" +
                    $"{(custAttr.HtmlAttributes.Any() ? string.Join(" ", custAttr.HtmlAttributes) : "")}>";
@@ -39,11 +39,11 @@ namespace ObjToForm.Utils
         {
             return string.Join("",
                      Enum.GetNames(prop.PropertyType)
-                         .Select(v => $"<option value='{v}'>{v}</option>"))
+                         .Select(v => $"<option value='{v}' {((v == prop.PropertyValue?.ToString()) ? "selected" : "")} >{v}</option>"))
                          .Insert(0, $"<select id='{prop.PropertyName}' name='{prop.PropertyName}'" +
                                     $"class='{string.Join(" ", custAttr.InputClasses)} {(!custAttr.OverrideInputClasses ? defaultClasses : "")}'" +
                                     $"{(custAttr.HtmlAttributes.Any() ? string.Join(" ", custAttr.HtmlAttributes) : "")}>") +
-                         "</select>";                
+                         "</select>";
         }
     }
 }
