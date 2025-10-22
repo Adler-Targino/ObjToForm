@@ -11,7 +11,7 @@ Several quick start options are available:
 - Clone the repo: `git clone https://github.com/Adler-Targino/ObjToForm.git`
 
 ## Demo
-
+After installing the library you can convert C# objects directly into HTML forms.
 ### Example object
 ```csharp
 
@@ -37,11 +37,25 @@ Several quick start options are available:
 
 ```
 
+### Object Initialization
+At your controller, initialize the object you are trying to convert.
 
-After installing the library you can convert C# objects directly into HTML forms
+```csharp
+
+        [BindProperty] // Necessary if you are using model binding
+        public DemoObj Obj { get; set; }
+
+        ...
+
+        public void OnGet()
+        {
+            Obj = new DemoObj();
+        }
+
+```
 
 ### Razor Page Example
-
+At your view, choose the most adequate function to render the contents of your object into the html form.
 ```cshtml
 
 @using ObjToForm;
@@ -50,20 +64,18 @@ After installing the library you can convert C# objects directly into HTML forms
 
 <!-- Raw HTML form -->
 <form method="post">
-    @ObjToForm.ConvertToRawHtmlForm(typeof(DemoObj))
+    @ObjToForm.ConvertToRawHtmlForm(Model.Obj)
     <!-- Or if you are using Model Binding -->
-    @ObjToForm.ConvertToRawHtmlForm(typeof(DemoObj), "Obj", true)
+    @ObjToForm.ConvertToRawHtmlForm(Model.Obj, "Obj", true)
 </form>
-
-<!-- Or using Model Binding -->
 
 <hr>
 
 <!-- Bootstrap-styled form -->
 <form method="post">
-    @ObjToForm.ConvertToBootstrapForm(typeof(DemoObj))
+    @ObjToForm.ConvertToBootstrapForm(Model.Obj)
     <!-- Or if you are using Model Binding -->
-    @ObjToForm.ConvertToBootstrapForm(typeof(DemoObj), "Obj", true)
+    @ObjToForm.ConvertToBootstrapForm(Model.Obj, "Obj", true)
 </form>
 
 ```
@@ -89,9 +101,10 @@ public IActionResult OnPost(string PublicString, int PublicInt, DateTime PublicD
 }
 
 //Or, if you are using ModelBinding
-public IActionResult OnPost(DemoObj Obj)
+public IActionResult OnPost()
 {
     ...
+    var myObj = Obj;
     return Page();
 }
 
@@ -99,6 +112,7 @@ public IActionResult OnPost(DemoObj Obj)
 ## Notes
 - As shown in the previous example, only public properties are rendered.
 - Using Bootstrap-styled forms requires to previously add bootstrap to your project
+- Although the examples show use cases without model binding, model binding is recommended for a more accurate result.
 
 ---
 # Advanced Usage
