@@ -28,6 +28,41 @@ namespace ObjToForm.Utils
                     propertyData.PropertyValue = value;
                     propertiesList.Add(propertyData);
                 }
+                else if (typeof(System.Collections.IEnumerable).IsAssignableFrom(propertyType))
+                {
+                    Type? enumerableType = null;
+                    if (propertyType.IsArray)
+                        enumerableType = propertyType.GetElementType();
+                    else if (propertyType.IsGenericType)
+                        enumerableType = propertyType.GetGenericArguments().FirstOrDefault();
+
+                    if (enumerableType != null)
+                    {
+                        var enumerable = value as System.Collections.IEnumerable;
+                        int index = 0;
+
+                        if (enumerable != null)
+                        {
+                            foreach (var item in enumerable)
+                            {
+                                foreach (var subProperty in GetPropertyList(item, $"{name}[{index}]", ModelBinding))
+                                {
+                                    propertiesList.Add(subProperty);
+                                }
+                                index++;
+                            }
+                        }
+                        else
+                        {
+                            var activatedItem = Activator.CreateInstance(enumerableType!);
+                            foreach (var subProperty in GetPropertyList(activatedItem!, $"{name}[0]", ModelBinding))
+                            {
+                                propertiesList.Add(subProperty);
+                            }
+                        }
+                    }
+
+                }
                 else if (propertyType.IsClass)
                 {
                     var subObj = value ?? Activator.CreateInstance(propertyType);
