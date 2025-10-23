@@ -10,6 +10,12 @@ namespace ObjToForm.Utils
             Type objType = obj.GetType();
             var propertiesList = new List<PropertyData>();
 
+            PropertyData parentData = new PropertyData();
+            parentData.PropertyName = objType.Name;
+            parentData.PropertyType = objType;
+            parentData.CustomAttributes = objType.GetCustomAttributes(false);
+            propertiesList.Add(parentData);
+
             string typeName =  ModelBinding ? $"{prefix}." : "";
 
             foreach (var property in objType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
@@ -54,10 +60,21 @@ namespace ObjToForm.Utils
                         }
                         else
                         {
-                            var activatedItem = Activator.CreateInstance(enumerableType!);
-                            foreach (var subProperty in GetPropertyList(activatedItem!, $"{name}[0]", ModelBinding))
+                            if (enumerableType.IsPrimitive || enumerableType == typeof(string) || enumerableType.IsValueType)
                             {
-                                propertiesList.Add(subProperty);
+                                propertyData.PropertyName = $"{name}[0]";
+                                propertyData.PropertyType = enumerableType;
+                                propertyData.CustomAttributes = property.GetCustomAttributes(false);
+                                propertiesList.Add(propertyData);
+                            }
+                            else
+                            {
+                                var activatedItem = Activator.CreateInstance(enumerableType!);
+
+                                foreach (var subProperty in GetPropertyList(activatedItem!, $"{name}[0]", ModelBinding))
+                                {
+                                    propertiesList.Add(subProperty);
+                                }
                             }
                         }
                     }

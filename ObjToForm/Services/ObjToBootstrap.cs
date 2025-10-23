@@ -44,7 +44,11 @@ namespace ObjToForm.Services
 
                     case var _ when prop.PropertyType.IsEnum:
                         AddSelect(ref result, prop);
-                        break;                        
+                        break;
+
+                    case var _ when prop.PropertyType.IsClass:
+                        AddHeading(ref result, prop);
+                        break;
 
                     default:
                         AddTextInput(ref result, prop);
@@ -121,6 +125,11 @@ namespace ObjToForm.Services
             s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
             s.Append(HtmlUtils.BuildSelect(custAttr, prop, "form-select"));
             s.Append("</div>");        
+        }
+
+        private void AddHeading(ref StringBuilder s, PropertyData prop)
+        {
+            s.Append(HtmlUtils.BuildHeading(custAttr, prop.PropertyName, "my-3"));
         }
     }
 }

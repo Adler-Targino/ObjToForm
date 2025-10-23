@@ -14,6 +14,7 @@ namespace ObjToForm.Tests
 
     public class DemoObj
     {
+        public List<string> StringList { get; set; }
         public DateTime DateTime { get; set; }
         public DemoOptions PublicOptionsEnum { get; set; }
         public DemoObj2 DemoObj2 { get; set; }

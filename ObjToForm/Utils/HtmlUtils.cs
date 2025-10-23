@@ -17,6 +17,16 @@ namespace ObjToForm.Utils
                    $">";
         }
 
+        public static string BuildHeading(CustomAttributes custAttr, string name, string defaultClasses = "") 
+        {
+            return $"{(custAttr.HeadingEnabled ? 
+                   $"<{(!string.IsNullOrEmpty(custAttr.HeadingSize.ToString()) ? custAttr.HeadingSize.ToString() : "h4")} " +
+                   $"class='{string.Join(" ", custAttr.HeadingClasses)} {(!custAttr.OverrideHeadingClasses ? defaultClasses : "")}' " +
+                   $"style='{(custAttr.HeadingStyles.Any() ? string.Join(";", custAttr.HeadingStyles) : "")}' " +
+                   $">{custAttr.Heading ?? name}" +
+                   $"</{(!string.IsNullOrEmpty(custAttr.HeadingSize.ToString()) ? custAttr.HeadingSize.ToString() : "h4")}>" : "")}";
+        }
+
         public static string BuildLabel(CustomAttributes custAttr, string name, string defaultClasses = "")
         {
             return $"{(custAttr.LabelEnabled ?

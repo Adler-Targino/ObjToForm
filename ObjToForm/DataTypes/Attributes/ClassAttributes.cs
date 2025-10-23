@@ -1,5 +1,17 @@
 ﻿namespace ObjToForm.DataTypes.Attributes
 {
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+    public class HeadingClassAttribute : Attribute
+    {
+        public string Class { get; set; }
+        public bool Override { get; set; }
+        public HeadingClassAttribute(string _class, bool _override = false)
+        {
+            Class = _class;
+            Override = _override;
+        }
+    }
+
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public class DivClassAttribute : Attribute
     {

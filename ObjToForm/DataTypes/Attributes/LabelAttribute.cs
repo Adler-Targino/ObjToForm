@@ -3,7 +3,7 @@
     [AttributeUsage(AttributeTargets.Property)]
     public class LabelAttribute : Attribute
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public bool Enabled { get; set; }
         
         public LabelAttribute(bool _enabled) 

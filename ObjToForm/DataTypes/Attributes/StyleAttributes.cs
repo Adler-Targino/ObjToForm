@@ -1,5 +1,15 @@
 ﻿namespace ObjToForm.DataTypes.Attributes
 {
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+    public class HeadingStyleAttribute : Attribute
+    {
+        public string Style { get; set; }
+        public HeadingStyleAttribute(string _style)
+        {
+            Style = _style;
+        }
+    }
+
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public class DivStyleAttribute : Attribute
     {
