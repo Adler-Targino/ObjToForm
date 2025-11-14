@@ -31,7 +31,15 @@ namespace ObjToForm.Tests
         [Fact]
         public void Test1()
         {
-            DemoObj Obj = new DemoObj();
+            List<string> sl = new List<string>();
+
+            sl.Add("1");
+            sl.Add("2");
+
+            DemoObj Obj = new DemoObj
+            {
+                StringList = sl,
+            };
 
             ObjToForm.ConvertToBootstrapForm(Obj, "Obj", true);
 

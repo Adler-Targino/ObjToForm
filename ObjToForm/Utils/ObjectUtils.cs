@@ -16,7 +16,7 @@ namespace ObjToForm.Utils
             parentData.CustomAttributes = objType.GetCustomAttributes(false);
             propertiesList.Add(parentData);
 
-            string typeName =  ModelBinding ? $"{prefix}." : "";
+            string typeName = ModelBinding ? $"{prefix}." : "";
 
             foreach (var property in objType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
             {
@@ -36,6 +36,12 @@ namespace ObjToForm.Utils
                 }
                 else if (typeof(System.Collections.IEnumerable).IsAssignableFrom(propertyType))
                 {
+                    PropertyData enumerableData = new PropertyData();
+                    enumerableData.PropertyName = property.Name;
+                    enumerableData.PropertyType = propertyType;
+                    enumerableData.CustomAttributes = property.GetCustomAttributes(false);
+                    propertiesList.Add(enumerableData);
+
                     Type? enumerableType = null;
                     if (propertyType.IsArray)
                         enumerableType = propertyType.GetElementType();
@@ -51,9 +57,20 @@ namespace ObjToForm.Utils
                         {
                             foreach (var item in enumerable)
                             {
-                                foreach (var subProperty in GetPropertyList(item, $"{name}[{index}]", ModelBinding))
+                                if (enumerableType.IsPrimitive || enumerableType == typeof(string) || enumerableType.IsValueType)
                                 {
-                                    propertiesList.Add(subProperty);
+                                    propertyData.PropertyName = $"{name}[{index}]";
+                                    propertyData.PropertyType = enumerableType;
+                                    propertyData.CustomAttributes = property.GetCustomAttributes(false);
+                                    propertyData.PropertyValue = item;
+                                    propertiesList.Add(propertyData);
+                                }
+                                else
+                                {
+                                    foreach (var subProperty in GetPropertyList(item, $"{name}[{index}]", ModelBinding))
+                                    {
+                                        propertiesList.Add(subProperty);
+                                    }
                                 }
                                 index++;
                             }
@@ -83,7 +100,7 @@ namespace ObjToForm.Utils
                 else if (propertyType.IsClass)
                 {
                     var subObj = value ?? Activator.CreateInstance(propertyType);
-                    foreach (var subProperty in GetPropertyList(subObj, name, ModelBinding))
+                    foreach (var subProperty in GetPropertyList(subObj!, name, ModelBinding))
                     {
                         propertiesList.Add(subProperty);
                     }
