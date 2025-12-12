@@ -13,6 +13,8 @@ namespace ObjToForm.Services
         private bool enumerableFlag = false;
         private string enumerableGroupName = string.Empty;
         private int enumerableIndex = 0;
+        private const string DIV_END = "</div>";
+
         public IHtmlContent ConvertToForm(object obj, string prefix, bool modelBinding)
         {
             var properties = ObjectUtils.GetPropertyList(obj, prefix, modelBinding);
@@ -96,20 +98,20 @@ namespace ObjToForm.Services
             custAttr.HtmlAttributes.Add("type='number'");
             custAttr.HtmlAttributes.Add("step='any'");
 
-            s.Append(HtmlUtils.BuildDiv(custAttr, "form-group my-3"));
-            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
-            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, prop.PropertyValue, "form-control"));
-            s.Append("</div>");            
+            s.Append(HtmlUtils.BuildDiv(custAttr, "form-group my-3"))
+             .Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName))
+             .Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, prop.PropertyValue, "form-control"))
+             .Append(DIV_END);
         }
 
         private void AddTextInput(ref StringBuilder s, PropertyData prop)
         {
             custAttr.HtmlAttributes.Add("type='text'");
 
-            s.Append(HtmlUtils.BuildDiv(custAttr, "form-group my-3"));
-            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
-            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, prop.PropertyValue, "form-control"));
-            s.Append("</div>");
+            s.Append(HtmlUtils.BuildDiv(custAttr, "form-group my-3"))
+             .Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName))
+             .Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, prop.PropertyValue, "form-control"))
+             .Append(DIV_END);
         }
 
         private void AddCharInput(ref StringBuilder s, PropertyData prop)
@@ -118,60 +120,59 @@ namespace ObjToForm.Services
             custAttr.HtmlAttributes.Add("maxlength='1'");
             custAttr.HtmlAttributes.Add("size='1'");
 
-            s.Append(HtmlUtils.BuildDiv(custAttr, "form-group my-3"));
-            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
-            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, prop.PropertyValue, "form-control"));
-            s.Append("</div>");
+            s.Append(HtmlUtils.BuildDiv(custAttr, "form-group my-3"))
+             .Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName))
+             .Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, prop.PropertyValue, "form-control"))
+             .Append(DIV_END);
         }
 
         private void AddCheckInput(ref StringBuilder s, PropertyData prop)
         {
             custAttr.HtmlAttributes.Add("type='checkbox'");
             custAttr.HtmlAttributes.Add("value='true'");
-            if((bool?)prop.PropertyValue == true)
+            if ((bool?)prop.PropertyValue == true)
                 custAttr.HtmlAttributes.Add("checked");
 
-            s.Append(HtmlUtils.BuildDiv(custAttr, "form-check my-3"));
-            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, null, "form-check-input"));
-            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName, "form-check-label"));
-            s.Append("</div>");            
+            s.Append(HtmlUtils.BuildDiv(custAttr, "form-check my-3"))
+             .Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, null, "form-check-input"))
+             .Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName, "form-check-label"))
+             .Append(DIV_END);
         }
 
         private void AddDateInput(ref StringBuilder s, PropertyData prop)
         {
             custAttr.HtmlAttributes.Add("type='date'");
-            if ((DateTime?)prop.PropertyValue != DateTime.MinValue)
-                custAttr.HtmlAttributes.Add($"value='{((DateTime)prop.PropertyValue).ToString("yyyy-MM-dd")}'");
+            if (prop.PropertyValue is DateTime dt && dt != DateTime.MinValue)
+                custAttr.HtmlAttributes.Add($"value='{dt:yyyy-MM-dd}'");
 
-            s.Append(HtmlUtils.BuildDiv(custAttr, "form-group my-3"));
-            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
-            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, null, "form-control"));
-            s.Append("</div>");
+            s.Append(HtmlUtils.BuildDiv(custAttr, "form-group my-3"))
+             .Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName))
+             .Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, null, "form-control"))
+             .Append(DIV_END);
         }
 
         private void AddSelect(ref StringBuilder s, PropertyData prop)
         {
-            s.Append(HtmlUtils.BuildDiv(custAttr, "form-group my-3"));
-            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
-            s.Append(HtmlUtils.BuildSelect(custAttr, prop, "form-select"));
-            s.Append("</div>");        
+            s.Append(HtmlUtils.BuildDiv(custAttr, "form-group my-3"))
+             .Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName))
+             .Append(HtmlUtils.BuildSelect(custAttr, prop, "form-select"))
+             .Append(DIV_END);
         }
 
         private void OpenEnumerableContainerDiv(ref StringBuilder s)
         {
-            s.Append(HtmlUtils.BuildDiv(custAttr, "form-group my-3", $"{enumerableGroupName}-container"));
-            s.Append(HtmlUtils.BuildDiv(custAttr, defaultClasses: $"{enumerableGroupName}-group"));
+            s.Append(HtmlUtils.BuildDiv(custAttr, "form-group my-3", $"{enumerableGroupName}-container"))
+             .Append(HtmlUtils.BuildDiv(custAttr, defaultClasses: $"{enumerableGroupName}-group"));
         }
 
         private void CloseEnumerableContainerDiv(ref StringBuilder s)
         {
-            s.Append(HtmlUtils.BuildDiv(custAttr, "col-12 text-end"));
-            s.Append(HtmlUtils.BuildButton($"Remove {enumerableGroupName}", "button", $"btn btn-danger remove-{enumerableGroupName}"));
-            s.Append("</div>");
-            s.Append("</div>");
-            s.Append("</div>");
-            s.Append(HtmlUtils.BuildButton($"Add {enumerableGroupName}", "button", "btn btn-secondary", $"add-{enumerableGroupName}"));
-            s.Append(HtmlUtils.BuildEnumerableGroupScript(enumerableGroupName));
+            s.Append(HtmlUtils.BuildDiv(custAttr, "col-12 text-end"))
+             .Append(HtmlUtils.BuildButton($"Remove {enumerableGroupName}", "button", $"btn btn-danger remove-{enumerableGroupName}"))
+             .Append(DIV_END).Append(DIV_END).Append(DIV_END)
+             .Append(HtmlUtils.BuildButton($"Add {enumerableGroupName}", "button", "btn btn-secondary", $"add-{enumerableGroupName}"))
+             .Append(HtmlUtils.BuildEnumerableGroupScript(enumerableGroupName));
+
             enumerableFlag = false;
             enumerableGroupName = string.Empty;
             enumerableIndex = 0;
