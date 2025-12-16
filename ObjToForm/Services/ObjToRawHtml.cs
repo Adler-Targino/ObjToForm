@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Html;
 using ObjToForm.DataTypes.Objects;
+using ObjToForm.Extensions;
 using ObjToForm.Interfaces;
 using ObjToForm.Utils;
 using System.Text;
@@ -9,6 +10,12 @@ namespace ObjToForm.Services
     internal class ObjToRawHtml : IObjectConvertService
     {
         private CustomAttributes custAttr;
+        private bool enumerableFlag = false;
+        private string enumerableGroupName = string.Empty;
+        private int enumerableIndex = 0;
+        private const string DIV_END = "</div>";
+        private const string LINE_BREAK = "<br>";
+
         public IHtmlContent ConvertToForm(object obj, string prefix, bool modelBinding)
         {
             var properties = ObjectUtils.GetPropertyList(obj, prefix, modelBinding);
@@ -16,8 +23,27 @@ namespace ObjToForm.Services
             var result = new StringBuilder();
             foreach (var prop in properties)
             {
-                custAttr = new CustomAttributes(prop.CustomAttributes);
+                if (enumerableFlag)
+                {
+                    if (prop.PropertyName.IndexOf($"{enumerableGroupName}[") == -1)
+                    {
+                        CloseEnumerableContainerDiv(ref result);
+                    }
+                    else
+                    {
+                        if (enumerableIndex != prop.PropertyName.GetEnumerableIndex())
+                        {
+                            result.Append(HtmlUtils.BuildDiv(custAttr));
+                            result.Append(HtmlUtils.BuildButton($"Remove {enumerableGroupName}", "button", $"remove-{enumerableGroupName}"));
+                            result.Append("</div>");
+                            result.Append("</div>");
+                            result.Append(HtmlUtils.BuildDiv(custAttr, id: $"{enumerableGroupName}-group"));
+                            enumerableIndex = prop.PropertyName.GetEnumerableIndex();
+                        }
+                    }
+                }
 
+                custAttr = new CustomAttributes(prop.CustomAttributes);
                 switch (prop.PropertyType)
                 {
                     case var _ when prop.PropertyType == typeof(int)
@@ -47,13 +73,24 @@ namespace ObjToForm.Services
                         AddSelect(ref result, prop);
                         break;
 
+                    case var _ when typeof(System.Collections.IEnumerable).IsAssignableFrom(prop.PropertyType):
+                        enumerableFlag = true;
+                        enumerableGroupName = prop.PropertyName;
+                        OpenEnumerableContainerDiv(ref result);
+                        break;
+
+                    case var _ when prop.PropertyType.IsClass:
+                        AddHeading(ref result, prop);
+                        break;
+
                     default:
                         AddTextInput(ref result, prop);
                         break;
-                };
+                }
+                ;
             }
 
-            result.Append("<br><input type='submit' value='Submit'>");
+            result.Append(HtmlUtils.BuildButton("Submit"));
 
             return new HtmlString(result.ToString());
         }
@@ -63,24 +100,24 @@ namespace ObjToForm.Services
             custAttr.HtmlAttributes.Add("type='number'");
             custAttr.HtmlAttributes.Add("step='any'");
 
-            s.Append(HtmlUtils.BuildDiv(custAttr));
-            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
-            s.Append("<br>");
-            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, prop.PropertyValue));
-            s.Append("<br>");
-            s.Append("</div>");
+            s.Append(HtmlUtils.BuildDiv(custAttr))
+             .Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName))
+             .Append(LINE_BREAK)
+             .Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, prop.PropertyValue))
+             .Append(DIV_END)
+             .Append(LINE_BREAK);
         }
 
         private void AddTextInput(ref StringBuilder s, PropertyData prop)
         {
             custAttr.HtmlAttributes.Add("type='text'");
 
-            s.Append(HtmlUtils.BuildDiv(custAttr));
-            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
-            s.Append("<br>");
-            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, prop.PropertyValue));
-            s.Append("<br>");
-            s.Append("</div>");
+            s.Append(HtmlUtils.BuildDiv(custAttr))
+             .Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName))
+             .Append(LINE_BREAK)
+             .Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, prop.PropertyValue))
+             .Append(DIV_END)
+             .Append(LINE_BREAK);
         }
 
         private void AddCharInput(ref StringBuilder s, PropertyData prop)
@@ -89,12 +126,12 @@ namespace ObjToForm.Services
             custAttr.HtmlAttributes.Add("maxlength='1'");
             custAttr.HtmlAttributes.Add("size='1'");
 
-            s.Append(HtmlUtils.BuildDiv(custAttr));
-            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
-            s.Append("<br>");
-            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, prop.PropertyValue));
-            s.Append("<br>");
-            s.Append("</div>");
+            s.Append(HtmlUtils.BuildDiv(custAttr))
+             .Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName))
+             .Append(LINE_BREAK)
+             .Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, prop.PropertyValue))
+             .Append(DIV_END)
+             .Append(LINE_BREAK);
         }
 
         private void AddCheckInput(ref StringBuilder s, PropertyData prop)
@@ -104,36 +141,62 @@ namespace ObjToForm.Services
             if ((bool?)prop.PropertyValue == true)
                 custAttr.HtmlAttributes.Add("checked");
 
-            s.Append(HtmlUtils.BuildDiv(custAttr));
-            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
-            s.Append("<br>");
-            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, null));
-            s.Append("<br>");
-            s.Append("</div>");
+            s.Append(HtmlUtils.BuildDiv(custAttr))
+             .Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName))
+             .Append(LINE_BREAK)
+             .Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, null))
+             .Append(DIV_END)
+             .Append(LINE_BREAK);
         }
 
         private void AddDateInput(ref StringBuilder s, PropertyData prop)
         {
             custAttr.HtmlAttributes.Add("type='date'");
-            if ((DateTime?)prop.PropertyValue != DateTime.MinValue)
-                custAttr.HtmlAttributes.Add($"value='{((DateTime)prop.PropertyValue).ToString("yyyy-MM-dd")}'");
+            if (prop.PropertyValue is DateTime dt && dt != DateTime.MinValue)
+                custAttr.HtmlAttributes.Add($"value='{dt:yyyy-MM-dd}'");
 
-            s.Append(HtmlUtils.BuildDiv(custAttr));
-            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
-            s.Append("<br>");
-            s.Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, null));
-            s.Append("<br>");
-            s.Append("</div>");
+            s.Append(HtmlUtils.BuildDiv(custAttr))
+             .Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName))
+             .Append(LINE_BREAK)
+             .Append(HtmlUtils.BuildInput(custAttr, prop.PropertyName, null))
+             .Append(DIV_END)
+             .Append(LINE_BREAK);
         }
 
         private void AddSelect(ref StringBuilder s, PropertyData prop)
         {
-            s.Append(HtmlUtils.BuildDiv(custAttr));
-            s.Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName));
-            s.Append("<br>");
-            s.Append(HtmlUtils.BuildSelect(custAttr, prop));
-            s.Append("<br>");
-            s.Append("</div>");
+            s.Append(HtmlUtils.BuildDiv(custAttr))
+             .Append(HtmlUtils.BuildLabel(custAttr, prop.PropertyName))
+             .Append(LINE_BREAK)
+             .Append(HtmlUtils.BuildSelect(custAttr, prop))
+             .Append(DIV_END)
+             .Append(LINE_BREAK);
+        }
+
+        private void OpenEnumerableContainerDiv(ref StringBuilder s)
+        {
+            s.Append(HtmlUtils.BuildDiv(custAttr, id:$"{enumerableGroupName}-container"))
+             .Append(HtmlUtils.BuildDiv(custAttr, defaultClasses: $"{enumerableGroupName}-group"));
+        }
+
+        private void CloseEnumerableContainerDiv(ref StringBuilder s)
+        {
+            s.Append(HtmlUtils.BuildDiv(custAttr))
+             .Append(HtmlUtils.BuildButton($"Remove {enumerableGroupName}", "button", $"remove-{enumerableGroupName}"))
+             .Append(DIV_END).Append(DIV_END).Append(DIV_END)
+             .Append(LINE_BREAK)
+             .Append(HtmlUtils.BuildButton($"Add {enumerableGroupName}", "button", id: $"add-{enumerableGroupName}"))
+             .Append(HtmlUtils.BuildEnumerableGroupScript(enumerableGroupName))
+             .Append(LINE_BREAK);
+
+            enumerableFlag = false;
+            enumerableGroupName = string.Empty;
+            enumerableIndex = 0;
+        }
+
+        private void AddHeading(ref StringBuilder s, PropertyData prop)
+        {
+            s.Append(HtmlUtils.BuildHeading(custAttr, prop.PropertyName));
         }
     }
 }
